@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Laurent De Plaen</Authors>
+    <Company>F9 Engineering</Company>
+    <Description>Toolbox Library Used @ F9 Engineering</Description>
+    <Copyright>MIT</Copyright>
+    <PackageProjectUrl>https://github.com/LaurentIsRunning/f9.Toolbox</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/LaurentIsRunning/f9.Toolbox</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>
