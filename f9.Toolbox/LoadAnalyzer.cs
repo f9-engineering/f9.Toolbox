@@ -17,7 +17,7 @@ namespace f9.Toolbox
     /// </value>
     public float Period { get; private set; }
     /// <summary>
-    /// Gets the duration [ms].
+    /// Gets the smoothed duration [ms].
     /// </summary>
     /// <value>
     /// The duration [ms].
