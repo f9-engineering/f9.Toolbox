@@ -11,5 +11,12 @@ namespace f9.Toolbox.Extensions
     {
       return source.Skip(Math.Max(0, source.Count() - count));
     }
+
+    public static T GetRandomItem<T>(this IEnumerable<T> list)
+    {
+      var list1 = list.ToList();
+      var rand = new Random();
+      return list1.ElementAt(rand.Next(list1.Count));
+    }
   }
 }
