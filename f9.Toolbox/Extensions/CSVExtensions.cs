@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace f9.Toolbox.Extensions
+namespace PePPs.Core.Tools
 {
 
   [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
@@ -36,10 +36,10 @@ namespace f9.Toolbox.Extensions
 
       foreach (var propertyInfo in properties)
       {
-        if(propertyInfo.PropertyType == typeof(FileInfo))
+        if (propertyInfo.PropertyType == typeof(FileInfo))
         {
           var fileInfo = propertyInfo.GetValue(target, null) as FileInfo;
-          if(fileInfo != null) values.Add(fileInfo.FullName);
+          if (fileInfo != null) values.Add(fileInfo.FullName);
         }
         else
         {
@@ -112,7 +112,7 @@ namespace f9.Toolbox.Extensions
 
       var propertyNames = firstLine.Split(separator).Select(n => n.Trim()).ToArray();
       var properties = typeof(T).GetProperties().ToDictionary(p => p.Name, p => p);
-      
+
       var csvLine = csvStream.ReadLine();
       while (!string.IsNullOrEmpty(csvLine))
       {
@@ -121,16 +121,13 @@ namespace f9.Toolbox.Extensions
 
         for (var i = 0; i < propertyNames.Length; i++)
         {
-
-          PropertyInfo property;
-
-          if (properties.TryGetValue(propertyNames[i], out property))
+          if (properties.TryGetValue(propertyNames[i], out var property))
           {
             if (!string.IsNullOrEmpty(values[i]) && !Attribute.IsDefined(property, typeof(CsvIgnoreAttribute)))
             {
               try
               {
-                if (property.PropertyType == typeof (FileInfo))
+                if (property.PropertyType == typeof(FileInfo))
                 {
                   property.SetValue(obj, new FileInfo(values[i]), null);
                 }
@@ -151,6 +148,75 @@ namespace f9.Toolbox.Extensions
           {
             throw new Exception("Property '" + propertyNames[i] + "' does not exists.");
           }
+        }
+        objects.Add(obj);
+
+        csvLine = csvStream.ReadLine();
+      }
+
+      return objects;
+    }
+
+
+    public static IEnumerable<Dictionary<string, object>> ImportCsv(this FileInfo csvFile)
+    {
+      return ImportCsv(csvFile, ',', false);
+    }
+
+    public static IEnumerable<Dictionary<string, object>> ImportCsv(this FileInfo csvFile, Char separator)
+    {
+      return ImportCsv(csvFile, separator, false);
+    }
+
+    public static IEnumerable<Dictionary<string, object>> ImportCsv(this FileInfo csvFile, Char separator, bool isUnknownColumnIgnored)
+    {
+      if (csvFile == null)
+      {
+        throw new ArgumentNullException(nameof(csvFile));
+      }
+
+      csvFile.Refresh();
+
+      if (!csvFile.Exists)
+      {
+        return new List<Dictionary<string, object>>();
+      }
+
+      using (var textReader = csvFile.OpenText())
+      {
+        return ImportCsv(textReader, separator, isUnknownColumnIgnored);
+      }
+    }
+
+    public static IEnumerable<Dictionary<string, object>> ImportCsv(this StreamReader csvStream, char separator, bool isUnknownColumnIgnored)
+    {
+      if (csvStream == null) throw new ArgumentNullException(nameof(csvStream));
+
+      var objects = new List<Dictionary<string, object>>();
+
+      var firstLine = csvStream.ReadLine();
+
+      if (string.IsNullOrEmpty(firstLine)) return objects;
+
+      var propertyNames = firstLine.Split(separator).Select(n => n.Trim()).ToArray();
+
+      var csvLine = csvStream.ReadLine();
+      while (!string.IsNullOrEmpty(csvLine))
+      {
+        var obj = new Dictionary<string, object>();
+        var values = csvLine.Split(separator).Select(n => n.Trim()).ToArray();
+
+        for (var i = 0; i < propertyNames.Length; i++)
+        {
+          if (float.TryParse(values[i], NumberStyles.Number, CultureInfo.InvariantCulture, out float value))
+          {
+            obj.Add(propertyNames[i], value);
+          }
+          else
+          {
+            obj.Add(propertyNames[i], values[i]);
+          }
+
         }
         objects.Add(obj);
 
