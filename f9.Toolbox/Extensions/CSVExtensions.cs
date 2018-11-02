@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace PePPs.Core.Tools
+namespace f9.Toolbox.Extensions
 {
 
   [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
@@ -36,10 +36,14 @@ namespace PePPs.Core.Tools
 
       foreach (var propertyInfo in properties)
       {
-        if (propertyInfo.PropertyType == typeof(FileInfo))
+        var value = propertyInfo.GetValue(target, null);
+        if (value is FileInfo fileInfo)
         {
-          var fileInfo = propertyInfo.GetValue(target, null) as FileInfo;
-          if (fileInfo != null) values.Add(fileInfo.FullName);
+          values.Add(fileInfo.FullName);
+        }
+        else if (value is TimeSpan span)
+        {
+          values.Add(((int)span.TotalMilliseconds).ToString());
         }
         else
         {
@@ -54,13 +58,13 @@ namespace PePPs.Core.Tools
     {
       using (var textWriter = csvFile.CreateText())
       {
-        if (objects.Any())
+        if (!objects.Any()) return;
+
+        var table = objects.GetTable();
+
+        foreach (var row in table)
         {
-          var table = objects.GetTable();
-          foreach (var row in table)
-          {
-            textWriter.WriteLine(string.Join(", ", row));
-          }
+          textWriter.WriteLine(string.Join(", ", row));
         }
       }
     }
@@ -70,12 +74,12 @@ namespace PePPs.Core.Tools
       return ImportCsv<T>(csvFile, ',', false);
     }
 
-    public static IEnumerable<T> ImportCsv<T>(this FileInfo csvFile, Char separator)
+    public static IEnumerable<T> ImportCsv<T>(this FileInfo csvFile, char separator)
     {
       return ImportCsv<T>(csvFile, separator, false);
     }
 
-    public static IEnumerable<T> ImportCsv<T>(this FileInfo csvFile, Char separator, bool isUnknownColumnIgnored)
+    public static IEnumerable<T> ImportCsv<T>(this FileInfo csvFile, char separator, bool isUnknownColumnIgnored)
     {
       if (csvFile == null)
       {
@@ -131,6 +135,10 @@ namespace PePPs.Core.Tools
                 {
                   property.SetValue(obj, new FileInfo(values[i]), null);
                 }
+                else if (property.PropertyType == typeof(TimeSpan))
+                {
+                  property.SetValue(obj, TimeSpan.FromMilliseconds(int.Parse(values[i])), null);
+                }
                 else
                 {
                   var value = Convert.ChangeType(values[i], property.PropertyType, CultureInfo.InvariantCulture);
@@ -158,17 +166,7 @@ namespace PePPs.Core.Tools
     }
 
 
-    public static IEnumerable<Dictionary<string, object>> ImportCsv(this FileInfo csvFile)
-    {
-      return ImportCsv(csvFile, ',', false);
-    }
-
-    public static IEnumerable<Dictionary<string, object>> ImportCsv(this FileInfo csvFile, Char separator)
-    {
-      return ImportCsv(csvFile, separator, false);
-    }
-
-    public static IEnumerable<Dictionary<string, object>> ImportCsv(this FileInfo csvFile, Char separator, bool isUnknownColumnIgnored)
+    public static IEnumerable<Dictionary<string, object>> ImportCsv(this FileInfo csvFile, char separator = ',', bool isUnknownColumnIgnored = false)
     {
       if (csvFile == null)
       {
@@ -188,7 +186,7 @@ namespace PePPs.Core.Tools
       }
     }
 
-    public static IEnumerable<Dictionary<string, object>> ImportCsv(this StreamReader csvStream, char separator, bool isUnknownColumnIgnored)
+    public static IEnumerable<Dictionary<string, object>> ImportCsv(this StreamReader csvStream, char separator = ',', bool isUnknownColumnIgnored = false)
     {
       if (csvStream == null) throw new ArgumentNullException(nameof(csvStream));
 
@@ -241,7 +239,7 @@ namespace PePPs.Core.Tools
       }
     }
 
-    public static List<string[]> ReadCsvFile(this StreamReader csvStream, char separator)
+    public static List<string[]> ReadCsvFile(this StreamReader csvStream, char separator = ',')
     {
       if (csvStream == null) throw new ArgumentNullException(nameof(csvStream));
 

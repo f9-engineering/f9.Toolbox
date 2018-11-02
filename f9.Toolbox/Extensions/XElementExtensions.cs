@@ -138,7 +138,7 @@ namespace f9.Toolbox.Extensions
       }
       else if (type == typeof(TimeSpan))
       {
-        value = new TimeSpan(0, 0, (int) double.Parse(attribute.Value, CultureInfo.InvariantCulture));
+        value = TimeSpan.FromMilliseconds(int.Parse(attribute.Value));
       }
       else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
       {
@@ -306,7 +306,7 @@ namespace f9.Toolbox.Extensions
     public static void RemoveAttributeRecursively(this XElement element, string attributeName)
     {
       var attr = element.Attribute(attributeName);
-      if (attr != null) attr.Remove();
+      attr?.Remove();
       foreach (var el in element.Elements()) el.RemoveAttributeRecursively(attributeName);
     }
 
@@ -354,9 +354,8 @@ namespace f9.Toolbox.Extensions
     {
       object adaptedValue;
 
-      if (value is double)
+      if (value is double doubleValue)
       {
-        var doubleValue = (double) value;
         var stringDoubleValue = doubleValue.ToString("r", CultureInfo.InvariantCulture);
         if (stringDoubleValue.Length > 10)
         {
@@ -364,9 +363,8 @@ namespace f9.Toolbox.Extensions
         }
         adaptedValue = stringDoubleValue;
       }
-      else if (value is float)
+      else if (value is float floatValue)
       {
-        var floatValue = (float)value;
         var stringFloatValue = floatValue.ToString("r", CultureInfo.InvariantCulture);
         if (stringFloatValue.Length > 7)
         {
@@ -374,9 +372,9 @@ namespace f9.Toolbox.Extensions
         }
         adaptedValue = stringFloatValue;
       }
-      else if (value is TimeSpan)
+      else if (value is TimeSpan span)
       {
-        adaptedValue = ((TimeSpan) value).TotalSeconds;
+        adaptedValue = (int)span.TotalMilliseconds;
       }
       else
       {
