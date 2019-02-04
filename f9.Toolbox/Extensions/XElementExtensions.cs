@@ -1,20 +1,8 @@
-﻿//-----------------------------------------------------------------------
-// <copyright file="XElementExtensions.cs" company="Transurb Technirail">
-//   Copyright © Transurb Technirail.  All rights reserved.
-// </copyright>
-//-----------------------------------------------------------------------
-// <author>Laurent De Plaen</author>
-// <date>02/03/2012</date>
-// <project>RailNet.Model</project>
-// <web>http://www.transurb.com</web>
-//-----------------------------------------------------------------------
-
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.Serialization;
 using System.Xml.Linq;
 
 namespace f9.Toolbox.Extensions
