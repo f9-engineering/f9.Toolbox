@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Xml.Linq;
 
 namespace f9.Toolbox.Extensions
@@ -452,6 +453,18 @@ namespace f9.Toolbox.Extensions
       }
 
       throw new InvalidOperationException("Element has been removed from its parent.");
+    }
+
+    public static XElement Normalize(this XElement element)
+    {
+      var attributes = element.Attributes().OrderBy(a => a.Name.ToString()).ToArray();
+      var children = element.Elements().Select(e => e.Normalize()).OrderBy(e => e.Name.ToString()).ToArray();
+      element.RemoveAll();
+
+      element.Add(attributes);
+      element.Add(children);
+
+      return element;
     }
   }
 
