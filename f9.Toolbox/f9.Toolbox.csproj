@@ -10,9 +10,9 @@
     <RepositoryUrl>https://github.com/LaurentIsRunning/f9.Toolbox</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AssemblyVersion>1.1.7.0</AssemblyVersion>
-    <FileVersion>1.1.7.0</FileVersion>
-    <Version>1.1.7</Version>
+    <AssemblyVersion>1.1.9.0</AssemblyVersion>
+    <FileVersion>1.1.9.0</FileVersion>
+    <Version>1.1.9</Version>
     <ApplicationIcon>dark_logo_transparent_lFd_icon.ico</ApplicationIcon>
     <PackageIconUrl>https://avatars1.githubusercontent.com/u/40230008?s=200&amp;v=4</PackageIconUrl>
   </PropertyGroup>
