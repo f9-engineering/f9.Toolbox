@@ -312,7 +312,7 @@ namespace f9.Toolbox.Extensions
 
     public static void StoreValue<T>(this XElement element, Expression<Func<T>> parameter)
     {
-      var body = ((MemberExpression) parameter.Body);
+      var body = (MemberExpression) parameter.Body;
       var expression = body.Expression as ConstantExpression;
 
       if (body.Member is FieldInfo)
@@ -364,6 +364,10 @@ namespace f9.Toolbox.Extensions
       else if (value is TimeSpan span)
       {
         adaptedValue = (int)span.TotalMilliseconds;
+      }
+      else if (value == null)
+      {
+        adaptedValue = "";
       }
       else
       {

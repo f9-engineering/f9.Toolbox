@@ -7,6 +7,8 @@ namespace f9.Toolbox.Tests.Extensions
   [TestClass]
   public class XElementExtensionTests
   {
+    public string Test { get; set; } = "Test";
+
     [TestMethod]
     public void NormalizeTest()
     {
@@ -18,6 +20,29 @@ namespace f9.Toolbox.Tests.Extensions
 
       xElement.Normalize();
       Assert.IsTrue(xElement.ToString().IndexOf(@"AlarmLevel1") < xElement.ToString().IndexOf(@"RatioParameters"));
+    }
+
+    [TestMethod]
+    public void StoreValueTest()
+    {
+      var element = new XElement("Test");
+      
+      element.StoreValue(() => Test);
+      Assert.AreEqual("Test", element.GetString("Test"));
+
+      var ints = new int[10];
+      element.StoreValue("Length", ints.Length);
+      Assert.AreEqual(10, element.GetInt32("Length"));
+    }
+
+    [TestMethod]
+    public void StoreNullValueTest()
+    {
+      var element = new XElement("Test");
+
+      element.StoreValue("Test", null);
+      Assert.AreEqual("", element.GetString("Test"));
+
     }
   }
 }
