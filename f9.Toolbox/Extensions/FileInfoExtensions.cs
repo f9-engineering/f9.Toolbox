@@ -14,13 +14,13 @@ namespace f9.Toolbox.Extensions
     /// <returns>The relative path to the file</returns>
     public static string GetRelativePath(this FileInfo file, string folder)
     {
-      Uri pathUri = new Uri(file.FullName);
+      var pathUri = new Uri(file.FullName);
       // Folders must end in a slash
       if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
       {
         folder += Path.DirectorySeparatorChar;
       }
-      Uri folderUri = new Uri(folder);
+      var folderUri = new Uri(folder);
       return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
     }
   }
